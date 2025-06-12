@@ -4,8 +4,11 @@ import 'package:flutter_bilbil_app/http/core/error.dart';
 import 'package:flutter_bilbil_app/http/core/net_adapter.dart';
 import 'package:flutter_bilbil_app/http/request/base_request.dart';
 
+import 'hi_interceptor.dart';
+
 class HiNet {
   HiNet._();
+  HiErrorInterceptor? _hiErrorInterceptor;
   static HiNet? _instance;
   static HiNet getInstance() {
     if (_instance == null) {
@@ -55,6 +58,10 @@ class HiNet {
     HiNetAdapter adapter = DioAdapter();
 
     return adapter.send(request);
+  }
+
+  void setErrorInterceptor(HiErrorInterceptor interceptor) {
+    this._hiErrorInterceptor = interceptor;
   }
 
   void printLog(log) {

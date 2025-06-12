@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bilbil_app/http/dao/login_dao.dart';
+import 'package:flutter_bilbil_app/navigator/hi_navigator.dart';
 import 'package:flutter_bilbil_app/util/string_util.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/widget/appbar.dart';
@@ -25,7 +26,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar('密码登录', '注册', () {}),
+      appBar: appBar('密码登录', '注册', () {
+        HiNavigator.getInstance().onJumpTo(RouteStatus.login);
+      }),
       body: Container(
         child: ListView(
           children: [

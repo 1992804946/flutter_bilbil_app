@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_bilbil_app/main.dart';
+// Ensure that main.dart defines a class named MyApp and it is exported.
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const BilBilApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

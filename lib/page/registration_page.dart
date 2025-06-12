@@ -4,6 +4,7 @@ import 'package:flutter_bilbil_app/widget/login_input.dart';
 
 import '../http/core/error.dart';
 import '../http/dao/login_dao.dart';
+import '../navigator/hi_navigator.dart';
 import '../util/toast.dart';
 import '../widget/appBar.dart';
 import '../widget/login_button.dart';
@@ -27,7 +28,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar("注册", "登录", widget.onJumpToLogin ?? () {}),
+      appBar: appBar("注册", "登录", () {
+        HiNavigator.getInstance().onJumpTo(RouteStatus.registration);
+      }),
       body: Container(
         child: ListView(
           //自适应键盘弹起防止遮挡输入框
