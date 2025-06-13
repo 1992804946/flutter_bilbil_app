@@ -27,7 +27,7 @@ class _HomeTabPageState extends State<HomeTabPage>
   ScrollController _scrollController = ScrollController();
 
   @override
-  void initSate() {
+  void initState() {
     super.initState();
     _scrollController.addListener(() {
       var dis = _scrollController.position.maxScrollExtent -
@@ -39,6 +39,8 @@ class _HomeTabPageState extends State<HomeTabPage>
         _loadData();
       }
     });
+    //首次加载
+    _loadData();
   }
 
   @override
@@ -103,9 +105,9 @@ class _HomeTabPageState extends State<HomeTabPage>
             //合成一个新数组
             videoList = [...videoList, ...result.videoList];
             pageIndex++;
-          } else {
-            videoList = result.videoList;
           }
+        } else {
+          videoList = result.videoList;
         }
       });
       Future.delayed(Duration(milliseconds: 1000), () {
