@@ -41,6 +41,12 @@ dependencies:
   fluttertoast: ^8.2.1
   underline_indicator: ^0.0.4
   flutter_swiper_null_safety: ^1.0.2
+  transparent_image: ^2.0.1
+  cached_network_image: ^3.2.3
+  lottie: ^2.3.2
+  flutter_nested: ^1.0.0
+  
+
 
 
 

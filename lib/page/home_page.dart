@@ -4,14 +4,17 @@ import 'package:flutter_bilbil_app/http/core/error.dart';
 import 'package:flutter_bilbil_app/http/dao/home_dao.dart';
 import 'package:flutter_bilbil_app/util/color.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
+import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 import 'home_tab_page.dart';
 import '../navigator/hi_navigator.dart';
 import 'package:flutter_bilbil_app/model/home_mo.dart';
 import 'package:flutter_bilbil_app/core/hi_state.dart';
+import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final ValueChanged<int> onJumpTo;
+  const HomePage({super.key, required this.onJumpTo});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -55,6 +58,12 @@ class _HomePageState extends HiState<HomePage>
     return Scaffold(
       body: Column(
         children: [
+          NavigationBarPlus(
+            height: 50,
+            child: _appBar(),
+            color: Colors.white,
+            statusStyle: StatusStyle.DARK_CONTENT,
+          ),
           Container(
             color: Colors.white,
             padding: EdgeInsets.only(top: 30),
@@ -122,5 +131,57 @@ class _HomePageState extends HiState<HomePage>
       print(e);
       showWarnToast(e.message);
     }
+  }
+
+  _appBar() {
+    return Padding(
+      padding: EdgeInsets.only(left: 15, right: 15),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () {
+              if (widget.onJumpTo != null) {
+                widget.onJumpTo(3);
+              }
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(23),
+              child: Image(
+                  height: 46,
+                  width: 46,
+                  image: AssetImage('images/avatar.png')),
+            ),
+          ),
+          Expanded(
+              child: Padding(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: EdgeInsets.only(left: 10),
+                height: 32,
+                alignment: Alignment.centerLeft,
+                child: Icon(
+                  Icons.search,
+                  color: Colors.grey,
+                ),
+                decoration: BoxDecoration(color: Colors.grey[100]),
+              ),
+            ),
+          )),
+          Icon(
+            Icons.explore_outlined,
+            color: Colors.grey,
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 12),
+            child: Icon(
+              Icons.email_outlined,
+              color: Colors.grey,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
