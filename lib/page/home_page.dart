@@ -5,6 +5,7 @@ import 'package:flutter_bilbil_app/http/dao/home_dao.dart';
 import 'package:flutter_bilbil_app/util/color.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
+import 'package:flutter_bilbil_app/widget/loading_container.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 import 'home_tab_page.dart';
 import '../navigator/hi_navigator.dart';
@@ -13,32 +14,32 @@ import 'package:flutter_bilbil_app/core/hi_state.dart';
 import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
-  final ValueChanged<int> onJumpTo;
-  const HomePage({super.key, required this.onJumpTo});
+  final ValueChanged<int>? onJumpTo;
+
+  const HomePage({Key? key, this.onJumpTo}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-//AutomaticKeepAliveClientMixin 的主要作用是保持页面状态，防止页面在切换时重新构建
 class _HomePageState extends HiState<HomePage>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   var listener;
   late TabController _controller;
   List<CategoryMo> categoryList = [];
   List<BannerMo> bannerList = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: categoryList.length, vsync: this);
-    HiNavigator.getInstance().addListener(listener = (current, pre) {
-      // 监听路由跳转
-      print('home_page: current: ${current.page}');
-      print('home_page: pre: ${pre?.page}');
-      if (widget == current || current.page is HomePage) {
+    HiNavigator.getInstance().addListener(this.listener = (current, pre) {
+      print('home:current:${current.page}');
+      print('home:pre:${pre.page}');
+      if (widget == current.page || current.page is HomePage) {
         print('打开了首页:onResume');
-      } else if (widget == pre || pre?.page is HomePage) {
+      } else if (widget == pre?.page || pre?.page is HomePage) {
         print('首页:onPause');
       }
     });
@@ -47,8 +48,8 @@ class _HomePageState extends HiState<HomePage>
 
   @override
   void dispose() {
-    HiNavigator.getInstance().removeListener(listener);
-
+    HiNavigator.getInstance().removeListener(this.listener);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -56,31 +57,30 @@ class _HomePageState extends HiState<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Column(
-        children: [
-          NavigationBarPlus(
-            height: 50,
-            child: _appBar(),
-            color: Colors.white,
-            statusStyle: StatusStyle.DARK_CONTENT,
-          ),
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.only(top: 30),
-            child: _tabBar(),
-          ),
-          Flexible(
-            child: TabBarView(
-              controller: _controller,
-              children: categoryList.map((tab) {
-                return HomeTabPage(
-                  categoryName: tab.name,
-                  bannerList: tab.name == '推荐' ? bannerList : null,
-                );
-              }).toList(),
+      body: LoadingContainer(
+        isLoading: _isLoading,
+        child: Column(
+          children: [
+            NavigationBarPlus(
+              height: 50,
+              child: _appBar(),
+              color: Colors.white,
+              statusStyle: StatusStyle.DARK_CONTENT,
             ),
-          ),
-        ],
+            Container(
+              color: Colors.white,
+              child: _tabBar(),
+            ),
+            Flexible(
+                child: TabBarView(
+                    controller: _controller,
+                    children: categoryList.map((tab) {
+                      return HomeTabPage(
+                          categoryName: tab.name,
+                          bannerList: tab.name == '推荐' ? bannerList : null);
+                    }).toList()))
+          ],
+        ),
       ),
     );
   }
@@ -88,27 +88,26 @@ class _HomePageState extends HiState<HomePage>
   @override
   bool get wantKeepAlive => true;
 
+  ///自定义顶部tab
   _tabBar() {
     return TabBar(
-      controller: _controller,
-      isScrollable: true,
-      labelColor: Colors.black,
-      indicator: UnderlineIndicator(
-        strokeCap: StrokeCap.round,
-        borderSide: BorderSide(color: primary, width: 3),
-        insets: EdgeInsets.only(left: 15, right: 15),
-      ),
-      tabs: categoryList.map<Tab>((tab) {
-        return Tab(
-          child: Padding(
-              padding: EdgeInsets.only(left: 5, right: 5),
-              child: Text(
-                tab.name,
-                style: TextStyle(fontSize: 16),
-              )),
-        );
-      }).toList(),
-    );
+        controller: _controller,
+        isScrollable: true,
+        labelColor: Colors.black,
+        indicator: UnderlineIndicator(
+            strokeCap: StrokeCap.round,
+            borderSide: BorderSide(color: primary, width: 3),
+            insets: EdgeInsets.only(left: 15, right: 15)),
+        tabs: categoryList.map<Tab>((tab) {
+          return Tab(
+              child: Padding(
+            padding: EdgeInsets.only(left: 5, right: 5),
+            child: Text(
+              tab.name,
+              style: TextStyle(fontSize: 16),
+            ),
+          ));
+        }).toList());
   }
 
   void loadData() async {
@@ -123,13 +122,20 @@ class _HomePageState extends HiState<HomePage>
       setState(() {
         categoryList = result.categoryList ?? [];
         bannerList = result.bannerList ?? [];
+        _isLoading = false;
       });
     } on NeedAuth catch (e) {
       print(e);
       showWarnToast(e.message);
+      setState(() {
+        _isLoading = false;
+      });
     } on HiNetError catch (e) {
       print(e);
       showWarnToast(e.message);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -141,15 +147,16 @@ class _HomePageState extends HiState<HomePage>
           InkWell(
             onTap: () {
               if (widget.onJumpTo != null) {
-                widget.onJumpTo(3);
+                widget.onJumpTo!(3);
               }
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(23),
               child: Image(
-                  height: 46,
-                  width: 46,
-                  image: AssetImage('images/avatar.png')),
+                height: 46,
+                width: 46,
+                image: AssetImage('images/avatar.png'),
+              ),
             ),
           ),
           Expanded(
@@ -161,10 +168,7 @@ class _HomePageState extends HiState<HomePage>
                 padding: EdgeInsets.only(left: 10),
                 height: 32,
                 alignment: Alignment.centerLeft,
-                child: Icon(
-                  Icons.search,
-                  color: Colors.grey,
-                ),
+                child: Icon(Icons.search, color: Colors.grey),
                 decoration: BoxDecoration(color: Colors.grey[100]),
               ),
             ),
@@ -176,10 +180,10 @@ class _HomePageState extends HiState<HomePage>
           Padding(
             padding: EdgeInsets.only(left: 12),
             child: Icon(
-              Icons.email_outlined,
+              Icons.mail_outline,
               color: Colors.grey,
             ),
-          )
+          ),
         ],
       ),
     );
