@@ -45,6 +45,9 @@ dependencies:
   cached_network_image: ^3.2.3
   lottie: ^2.3.2
   flutter_nested: ^1.0.0
+  chewie: 1.7.0
+  video_player: ^2.6.1
+
   
 
 

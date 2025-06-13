@@ -8,7 +8,6 @@ import 'package:flutter_bilbil_app/util/color.dart';
 import 'package:flutter_bilbil_app/widget/video_card.dart';
 import 'package:flutter_nested/flutter_nested.dart';
 import '../model/video_model.dart';
-import '../navigator/hi_navigator.dart';
 
 class HomeTabPage extends StatefulWidget {
   final String categoryName;
