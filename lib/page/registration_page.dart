@@ -29,7 +29,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar("注册", "登录", () {
-        HiNavigator.getInstance().onJumpTo(RouteStatus.registration);
+        HiNavigator.getInstance().onJumpTo(RouteStatus.login);
       }),
       body: Container(
         child: ListView(
@@ -125,6 +125,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (result['code'] == 0) {
         print("注册成功");
         showToast("注册成功");
+        HiNavigator.getInstance().onJumpTo(RouteStatus.login);
         if (widget.onJumpToLogin != null) {
           widget.onJumpToLogin!();
         } else {

@@ -8,7 +8,7 @@ import 'package:flutter_bilbil_app/http/request/registration_request.dart';
 import '../request/login_request.dart';
 
 class LoginDao {
-  static const BOARDING_PASS = "boarding_pass";
+  static const BOARDING_PASS = "boarding-pass";
   static login(String userName, String password) {
     return _send(userName, password);
   }
@@ -41,6 +41,6 @@ class LoginDao {
   }
 
   static getBoardingPass() {
-    return HiCache.getInstance().get(BOARDING_PASS) ?? "";
+    return HiCache.getInstance().get(BOARDING_PASS);
   }
 }

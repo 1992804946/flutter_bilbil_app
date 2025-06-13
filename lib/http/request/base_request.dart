@@ -4,7 +4,10 @@ enum HttpMethod { GET, POST, DELETE }
 
 ///基础请求
 
+///基础请求
 abstract class BaseRequest {
+  // curl -X GET "http://api.devio.org/uapi/test/test?requestPrams=11" -H "accept: */*"
+  // curl -X GET "https://api.devio.org/uapi/test/test/1
   var pathParams;
   var useHttps = true;
 
@@ -13,7 +16,9 @@ abstract class BaseRequest {
   }
 
   HttpMethod httpMethod();
+
   String path();
+
   String url() {
     Uri uri;
     var pathStr = path();
@@ -22,7 +27,7 @@ abstract class BaseRequest {
       if (path().endsWith("/")) {
         pathStr = "${path()}$pathParams";
       } else {
-        pathStr = "${path()}$pathParams";
+        pathStr = "${path()}/$pathParams";
       }
     }
     //http和https切换
@@ -32,17 +37,20 @@ abstract class BaseRequest {
       uri = Uri.http(authority(), pathStr, params);
     }
     if (needLogin()) {
-      //添加登录令牌
+      //给需要登录的接口携带登录令牌
       addHeader(LoginDao.BOARDING_PASS, LoginDao.getBoardingPass());
     }
     print('url:${uri.toString()}');
+    print(header);
     return uri.toString();
   }
 
   bool needLogin();
+
   Map<String, String> params = Map();
-  //添加参数
-  BaseRequest add(String k, String v) {
+
+  ///添加参数
+  BaseRequest add(String k, Object v) {
     params[k] = v.toString();
     return this;
   }
@@ -53,7 +61,7 @@ abstract class BaseRequest {
     "auth-token": "ZmEtMjAyMS0wNC0xMiAyMToyMjoyMC1mYQ==fa",
   };
 
-  //添加参数
+  ///添加header
   BaseRequest addHeader(String k, Object v) {
     header[k] = v.toString();
     return this;

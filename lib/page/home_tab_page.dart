@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bilbil_app/model/home_mo.dart';
 import '../model/video_model.dart';
 import '../navigator/hi_navigator.dart';
 
 class HomeTabPage extends StatefulWidget {
   final String name;
-  const HomeTabPage({super.key, required this.name});
+  final List<BannerMo>? bannerList;
+  const HomeTabPage({super.key, required this.name, this.bannerList});
 
   @override
   State<HomeTabPage> createState() => _HomeTabPageState();
@@ -14,7 +16,11 @@ class _HomeTabPageState extends State<HomeTabPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(children: [
+      child: Text(widget.name),
+    );
+  }
+}
+/* child: Column(children: [
         Text(widget.name),
         MaterialButton(
           onPressed: () => {
@@ -23,7 +29,5 @@ class _HomeTabPageState extends State<HomeTabPage> {
           },
           child: Text('跳转到详情页'),
         )
-      ]),
-    );
-  }
-}
+      ]), */
+    
