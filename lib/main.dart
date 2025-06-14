@@ -92,7 +92,13 @@ class BilBilRouteDelegate extends RouterDelegate<BilBilRoutePath>
       tempPages.clear();
       page = pageWarp(BottomNavigator());
     } else if (routeStatus == RouteStatus.detail) {
-      page = pageWarp(VideoDetailPage(videoModel!));
+      if (videoModel == null) {
+        page = pageWarp(
+          Scaffold(body: Center(child: Text("视频未加载"))),
+        );
+      } else {
+        page = pageWarp(VideoDetailPage(videoModel!));
+      }
     } else if (routeStatus == RouteStatus.registration) {
       page = pageWarp(RegistrationPage());
     } else if (routeStatus == RouteStatus.login) {
@@ -146,7 +152,7 @@ class BilBilRouteDelegate extends RouterDelegate<BilBilRoutePath>
   RouteStatus get routeStatus {
     if (_routeStatus != RouteStatus.registration && !hasLogin) {
       return _routeStatus = RouteStatus.login;
-    } else if (videoModel != null) {
+    } else if (_routeStatus == RouteStatus.detail && videoModel != null) {
       return _routeStatus = RouteStatus.detail;
     } else {
       return _routeStatus;
