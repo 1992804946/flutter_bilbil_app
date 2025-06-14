@@ -5,6 +5,7 @@ import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:flutter_bilbil_app/widget/appBar.dart';
 import 'package:flutter_bilbil_app/widget/hi_tab.dart';
 import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
+import 'package:flutter_bilbil_app/widget/video_header.dart';
 import 'package:flutter_bilbil_app/widget/video_view.dart';
 import '../model/video_model.dart';
 
@@ -20,6 +21,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
   List tabs = ["简介", "评论"];
+  VideoModel? videoModel;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     changeStatusBar(
         color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
     _controller = TabController(length: tabs.length, vsync: this);
+    videoModel = widget.videoModel;
   }
 
   @override
@@ -52,6 +55,16 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                 ),
                 _videoView(),
                 _buildTabNavigation(),
+                Flexible(
+                    child: TabBarView(
+                  controller: _controller,
+                  children: [
+                    _buildDetailList(),
+                    Container(
+                      child: Text('敬请期待...'),
+                    )
+                  ],
+                ))
               ],
             )));
   }
@@ -102,4 +115,23 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       controller: _controller,
     );
   }
+
+  _buildDetailList() {
+    return ListView(
+      padding: EdgeInsets.all(0),
+      children: [...buildContents()],
+    );
+  }
+
+  buildContents() {
+    return [
+      Container(
+        child: VideoHeader(
+          owner: videoModel!.owner,
+        ),
+      )
+    ];
+  }
+
+  buildVideoList() {}
 }
