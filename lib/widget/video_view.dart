@@ -61,7 +61,7 @@ class _MyWidgetState extends State<VideoView> {
           showLoadingOnInitialize: false,
           showBigPlayIcon: false,
           bottomGradient: blackLineGradient(),
-          //overlayUI: widget.overlayUI,
+          overlayUI: widget.overlayUI,
         ),
         materialProgressColors: _progressColors);
   }
