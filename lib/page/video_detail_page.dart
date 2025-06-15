@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bilbil_app/http/core/error.dart';
+import 'package:flutter_bilbil_app/http/dao/favorite_dao.dart';
+import 'package:flutter_bilbil_app/http/dao/like_dao.dart';
 import 'package:flutter_bilbil_app/http/dao/video_detail_dao.dart';
 import 'package:flutter_bilbil_app/model/video_detail_mo.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_bilbil_app/widget/expandable_content.dart';
 import 'package:flutter_bilbil_app/widget/hi_tab.dart';
 import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
 import 'package:flutter_bilbil_app/widget/video_header.dart';
+import 'package:flutter_bilbil_app/widget/video_toolBar.dart';
 import 'package:flutter_bilbil_app/widget/video_view.dart';
 import '../model/video_model.dart';
 
@@ -53,28 +56,30 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         body: MediaQuery.removePadding(
             removeTop: Platform.isIOS,
             context: context,
-            child: Column(
-              children: [
-                //ios黑色状态栏
-                NavigationBarPlus(
-                  color: Colors.black,
-                  statusStyle: StatusStyle.LIGHT_CONTENT,
-                  height: Platform.isAndroid ? 0 : 46,
-                ),
-                _videoView(),
-                _buildTabNavigation(),
-                Flexible(
-                    child: TabBarView(
-                  controller: _controller,
-                  children: [
-                    _buildDetailList(),
-                    Container(
-                      child: Text('敬请期待...'),
-                    )
-                  ],
-                ))
-              ],
-            )));
+            child: videoModel?.url != null
+                ? Column(
+                    children: [
+                      //ios黑色状态栏
+                      NavigationBarPlus(
+                        color: Colors.black,
+                        statusStyle: StatusStyle.LIGHT_CONTENT,
+                        height: Platform.isAndroid ? 0 : 46,
+                      ),
+                      _videoView(),
+                      _buildTabNavigation(),
+                      Flexible(
+                          child: TabBarView(
+                        controller: _controller,
+                        children: [
+                          _buildDetailList(),
+                          Container(
+                            child: Text('敬请期待...'),
+                          )
+                        ],
+                      ))
+                    ],
+                  )
+                : Container()));
   }
 
   _videoView() {
@@ -139,6 +144,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         ),
       ),
       ExpandableContent(videoModel: videoModel!),
+      VideoToolBar(
+        videoModel: videoModel!,
+        detailMo: videoDetailMo,
+        onLike: _doLike,
+        onUnLike: _onUnLike,
+        onFavorite: _onFavorite,
+      )
     ];
   }
 
@@ -161,4 +173,58 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       print(e);
     }
   }
+
+//点赞
+  void _doLike() async {
+    try {
+      var result = await LikeDao.like(videoModel!.vid, !videoDetailMo!.isLike);
+      print(result);
+      videoDetailMo!.isLike = !videoDetailMo!.isLike;
+      if (videoDetailMo!.isLike) {
+        videoModel!.like += 1;
+      } else {
+        videoModel!.like -= 1;
+      }
+      setState(() {
+        videoDetailMo = videoDetailMo;
+        videoModel = videoModel;
+      });
+      showToast(result['msg']);
+    } on NeedAuth catch (e) {
+      print(e);
+      showWarnToast(e.message);
+    } on HiNetError catch (e) {
+      print(e);
+    }
+  }
+
+  ///取消点赞
+  void _onUnLike() {}
+
+  ///收藏
+  void _onFavorite() async {
+    try {
+      var result = await FavoriteDao.favorite(
+          videoModel!.vid, !videoDetailMo!.isFavorite);
+      print(result);
+      videoDetailMo!.isFavorite = !videoDetailMo!.isFavorite;
+      if (videoDetailMo!.isFavorite) {
+        videoModel!.favorite += 1;
+      } else {
+        videoModel!.favorite -= 1;
+      }
+      setState(() {
+        videoDetailMo = videoDetailMo;
+        videoModel = videoModel;
+      });
+      showToast(result['msg']);
+    } on NeedAuth catch (e) {
+      print(e);
+      showWarnToast(e.message);
+    } on HiNetError catch (e) {
+      print(e);
+    }
+  }
+
+  _buildVideoList() {}
 }
