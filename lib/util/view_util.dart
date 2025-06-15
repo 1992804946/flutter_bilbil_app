@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bilbil_app/util/format_util.dart';
 
 enum StatusStyle { LIGHT_CONTENT, DARK_CONTENT }
 
@@ -63,4 +64,20 @@ blackLineGradient({bool fromTop = false}) {
         Colors.black12,
         Colors.transparent
       ]);
+}
+
+///带文字的小图标
+smallIconText(IconData iconData, var text) {
+  var style = TextStyle(fontSize: 12, color: Colors.grey);
+  if (text is int) {
+    text = countFormat(text);
+  }
+  return [
+    Icon(
+      iconData,
+      color: Colors.grey,
+      size: 12,
+    ),
+    Text('$text', style: style)
+  ];
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:flutter_bilbil_app/widget/appBar.dart';
+import 'package:flutter_bilbil_app/widget/expandable_content.dart';
 import 'package:flutter_bilbil_app/widget/hi_tab.dart';
 import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
 import 'package:flutter_bilbil_app/widget/video_header.dart';
@@ -129,7 +130,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         child: VideoHeader(
           owner: videoModel!.owner,
         ),
-      )
+      ),
+      ExpandableContent(videoModel: videoModel!),
     ];
   }
 
