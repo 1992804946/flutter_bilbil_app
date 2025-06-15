@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bilbil_app/http/core/error.dart';
+import 'package:flutter_bilbil_app/http/dao/video_detail_dao.dart';
+import 'package:flutter_bilbil_app/model/video_detail_mo.dart';
+import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:flutter_bilbil_app/widget/appBar.dart';
 import 'package:flutter_bilbil_app/widget/expandable_content.dart';
@@ -23,6 +27,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   late TabController _controller;
   List tabs = ["简介", "评论"];
   VideoModel? videoModel;
+  VideoDetailMo? videoDetailMo;
+  List<VideoModel> videoList = [];
 
   @override
   void initState() {
@@ -32,6 +38,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
     _controller = TabController(length: tabs.length, vsync: this);
     videoModel = widget.videoModel;
+    _loadDetail();
   }
 
   @override
@@ -136,4 +143,22 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   }
 
   buildVideoList() {}
+
+  void _loadDetail() async {
+    try {
+      VideoDetailMo result = await VideoDetailDao.get(videoModel!.vid);
+      print(result);
+      setState(() {
+        videoDetailMo = result;
+        //更新旧数据
+        videoModel = result.videoInfo;
+        videoList = result.videoList;
+      });
+    } on NeedAuth catch (e) {
+      print(e);
+      showWarnToast(e.message);
+    } on HiNetError catch (e) {
+      print(e);
+    }
+  }
 }
