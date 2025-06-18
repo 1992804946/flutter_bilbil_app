@@ -13,6 +13,7 @@ import 'package:flutter_bilbil_app/widget/expandable_content.dart';
 import 'package:flutter_bilbil_app/widget/hi_tab.dart';
 import 'package:flutter_bilbil_app/widget/navigation_bar.dart';
 import 'package:flutter_bilbil_app/widget/video_header.dart';
+import 'package:flutter_bilbil_app/widget/video_large_card.dart';
 import 'package:flutter_bilbil_app/widget/video_toolBar.dart';
 import 'package:flutter_bilbil_app/widget/video_view.dart';
 import '../model/video_model.dart';
@@ -132,7 +133,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   _buildDetailList() {
     return ListView(
       padding: EdgeInsets.all(0),
-      children: [...buildContents()],
+      children: [...buildContents(), ..._buildVideoList()],
     );
   }
 
@@ -154,7 +155,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     ];
   }
 
-  buildVideoList() {}
+  ///buildVideoList() {}
 
   void _loadDetail() async {
     try {
@@ -226,5 +227,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     }
   }
 
-  _buildVideoList() {}
+  _buildVideoList() {
+    return videoList
+        .map((VideoModel mo) => VideoLargeCard(videoModel: mo))
+        .toList();
+  }
 }
