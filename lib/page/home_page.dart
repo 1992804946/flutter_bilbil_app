@@ -4,12 +4,12 @@ import 'package:flutter_bilbil_app/http/core/error.dart';
 import 'package:flutter_bilbil_app/http/dao/home_dao.dart';
 import 'package:flutter_bilbil_app/page/profile_page.dart';
 import 'package:flutter_bilbil_app/page/video_detail_page.dart';
-import 'package:flutter_bilbil_app/util/color.dart';
+
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:flutter_bilbil_app/widget/hi_tab.dart';
 import 'package:flutter_bilbil_app/widget/loading_container.dart';
-import 'package:underline_indicator/underline_indicator.dart';
+
 import 'home_tab_page.dart';
 import '../navigator/hi_navigator.dart';
 import 'package:flutter_bilbil_app/model/home_mo.dart';
@@ -40,7 +40,7 @@ class _HomePageState extends HiState<HomePage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _controller = TabController(length: categoryList.length, vsync: this);
     HiNavigator.getInstance().addListener(this.listener = (current, pre) {
       print('home:current:${current.page}');
