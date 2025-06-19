@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bilbil_app/navigator/bottom_navigator.dart';
 import 'package:flutter_bilbil_app/page/login_page.dart';
+import 'package:flutter_bilbil_app/page/notice_page.dart';
 import 'package:flutter_bilbil_app/page/registration_page.dart';
 import 'package:flutter_bilbil_app/page/video_detail_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 typedef RouteChangeListener(RouteStatusInfo current, RouteStatusInfo? pre);
 //创建页面
@@ -22,7 +24,7 @@ int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
 }
 
 //自定义路由封装，路由状态
-enum RouteStatus { login, registration, home, detail, unknown }
+enum RouteStatus { login, registration, home, detail, unknown, notice }
 
 ///获取page对应的RouteStatus
 RouteStatus getStatus(MaterialPage page) {
@@ -34,6 +36,8 @@ RouteStatus getStatus(MaterialPage page) {
     return RouteStatus.detail;
   } else if (page.child is BottomNavigator) {
     return RouteStatus.home;
+  } else if (page.child is NoticePage) {
+    return RouteStatus.notice;
   } else {
     return RouteStatus.unknown;
   }
@@ -61,6 +65,15 @@ class HiNavigator extends _RouteJumpListener {
   static HiNavigator getInstance() {
     _instance ??= HiNavigator._();
     return _instance!;
+  }
+
+  Future<bool> openH5(String url) async {
+    var result = await canLaunch(url);
+    if (result) {
+      return await launch(url);
+    } else {
+      return Future.value(false);
+    }
   }
 
   //注册路由跳转逻辑

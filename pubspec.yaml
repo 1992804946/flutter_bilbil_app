@@ -47,6 +47,10 @@ dependencies:
   flutter_nested: ^1.0.0
   chewie: 1.7.0
   video_player: ^2.6.1
+  intl: ^0.18.1
+  url_launcher: ^6.1.11
+
+
 
   
 
