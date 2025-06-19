@@ -6,9 +6,8 @@ import 'package:flutter_bilbil_app/util/toast.dart';
 
 //通用底层带分页和刷新的页面框架
 //M为Dao返回数据模型，L为列表数据模型，T为具体widget
-abstract class HiBaseTabState<M,L,T extends StatefulWidget> extends HiState<T>
-    with
-        AutomaticKeepAliveClientMixin, {
+abstract class HiBaseTabState<M, L, T extends StatefulWidget> extends HiState<T>
+    with AutomaticKeepAliveClientMixin {
   List<L> dataList = [];
   int pageIndex = 1;
   bool loading = false;
@@ -25,15 +24,17 @@ abstract class HiBaseTabState<M,L,T extends StatefulWidget> extends HiState<T>
       print('dis:$dis');
       //当距离底部不足300时加载更多
       //fix当列表高度不满屏幕高度时不执行加载更多
-      if (dis < 300 && !loading
-      && scrollController.position.maxScrollExtent!=0) {
+      if (dis < 300 &&
+          !loading &&
+          scrollController.position.maxScrollExtent != 0) {
         print('------_loadData---');
         loadData(loadMore: true);
       }
     });
     loadData();
   }
-   @override
+
+  @override
   void dispose() {
     super.dispose();
     scrollController.dispose();
@@ -46,10 +47,10 @@ abstract class HiBaseTabState<M,L,T extends StatefulWidget> extends HiState<T>
       onRefresh: loadData,
       color: primary,
       child: MediaQuery.removePadding(
-         removeTop: true,
-         context: context,
-         child: contentChild,
-         ),
+        removeTop: true,
+        context: context,
+        child: contentChild,
+      ),
     );
   }
 
@@ -60,7 +61,7 @@ abstract class HiBaseTabState<M,L,T extends StatefulWidget> extends HiState<T>
   List<L> parseList(M result);
 
   Future<void> loadData({loadMore = false}) async {
-    if(loading){
+    if (loading) {
       print("上次加载还没有完成...");
       return;
     }
@@ -74,10 +75,9 @@ abstract class HiBaseTabState<M,L,T extends StatefulWidget> extends HiState<T>
       var result = await getData(currentIndex);
       setState(() {
         if (loadMore) {
-            //合成一个新数组
-            dataList = [...dataList, ...parseList(result)];
-            pageIndex++;
-          
+          //合成一个新数组
+          dataList = [...dataList, ...parseList(result)];
+          pageIndex++;
         } else {
           dataList = parseList(result);
         }
