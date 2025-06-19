@@ -27,12 +27,6 @@ class _HomeTabPageState
     print(widget.bannerList);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-  }
-
   _banner(List<BannerMo> bannerList) {
     return HiBanner(bannerList, padding: EdgeInsets.only(left: 5, right: 5));
   }

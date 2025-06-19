@@ -43,6 +43,7 @@ class _HomePageState extends HiState<HomePage>
     WidgetsBinding.instance.addObserver(this);
     _controller = TabController(length: categoryList.length, vsync: this);
     HiNavigator.getInstance().addListener(this.listener = (current, pre) {
+      this._currentPage = current.page;
       print('home:current:${current.page}');
       print('home:pre:${pre.page}');
       if (widget == current.page || current.page is HomePage) {
@@ -104,7 +105,7 @@ class _HomePageState extends HiState<HomePage>
               statusStyle: StatusStyle.DARK_CONTENT,
             ),
             Container(
-              color: Colors.white,
+              decoration: bottomBoxShadow(),
               child: _tabBar(),
             ),
             Flexible(
