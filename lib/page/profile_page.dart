@@ -4,6 +4,7 @@ import 'package:flutter_bilbil_app/http/dao/profile_dao.dart';
 import 'package:flutter_bilbil_app/model/profile_mo.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
+import 'package:flutter_bilbil_app/widget/hi_blur.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,12 +37,18 @@ class _ProfilePageState extends State<ProfilePage>
               pinned: true,
               //定义股东空间
               flexibleSpace: FlexibleSpaceBar(
-                titlePadding: EdgeInsets.only(left: 0),
-                title: _buildHead(),
-                background: Container(
-                  color: Colors.deepPurpleAccent,
-                ),
-              ),
+                  //collapseMode实现视差滚动
+                  collapseMode: CollapseMode.parallax,
+                  titlePadding: EdgeInsets.only(left: 0),
+                  title: _buildHead(),
+                  background: Stack(
+                    children: [
+                      Positioned.fill(
+                          child: cachedImage(
+                              'https://www.devio.org/img/beauty_camera/beauty_camera4.jpg')),
+                      Positioned.fill(child: HiBlur(sigma: 20)),
+                    ],
+                  )),
             )
           ];
         },
