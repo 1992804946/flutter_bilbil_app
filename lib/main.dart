@@ -6,6 +6,7 @@ import 'package:flutter_bilbil_app/http/core/hi_net.dart';
 import 'package:flutter_bilbil_app/http/dao/login_dao.dart';
 import 'package:flutter_bilbil_app/navigator/hi_navigator.dart';
 import 'package:flutter_bilbil_app/page/login_page.dart';
+import 'package:flutter_bilbil_app/page/notice_page.dart';
 import 'package:flutter_bilbil_app/page/registration_page.dart';
 import 'package:flutter_bilbil_app/util/color.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
@@ -29,6 +30,7 @@ class _BilBilAppState extends State<BilBilApp> {
 
   @override
   Widget build(BuildContext context) {
+    var page = pageWarp(Scaffold(body: Center(child: Text("页面未定义"))));
     return FutureBuilder<HiCache>(
       //进行初始化
       future: HiCache.preInit(),
@@ -99,6 +101,8 @@ class BilBilRouteDelegate extends RouterDelegate<BilBilRoutePath>
       } else {
         page = pageWarp(VideoDetailPage(videoModel!));
       }
+    } else if (routeStatus == RouteStatus.notice) {
+      page = pageWarp(NoticePage());
     } else if (routeStatus == RouteStatus.registration) {
       page = pageWarp(RegistrationPage());
     } else if (routeStatus == RouteStatus.login) {

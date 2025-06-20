@@ -14,7 +14,7 @@ class NoticeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        //handleBannerClick(bannerMo);
+        handleBannerClick(bannerMo);
       },
       child: Container(
         decoration: BoxDecoration(border: borderLine(context)),

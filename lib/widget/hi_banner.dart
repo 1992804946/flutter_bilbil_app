@@ -54,13 +54,13 @@ class HiBanner extends StatelessWidget {
       ),
     );
   }
+}
 
-  void handleBannerClick(BannerMo bannerMo) {
-    if (bannerMo.type == 'video') {
-      HiNavigator.getInstance().onJumpTo(RouteStatus.detail,
-          args: {'videoMo': VideoModel(vid: bannerMo.url)});
-    } else {
-      HiNavigator.getInstance().openH5(bannerMo.url);
-    }
+void handleBannerClick(BannerMo bannerMo) {
+  if (bannerMo.type == 'video') {
+    HiNavigator.getInstance().onJumpTo(RouteStatus.detail,
+        args: {'videoMo': VideoModel(vid: bannerMo.url)});
+  } else {
+    HiNavigator.getInstance().openH5(bannerMo.url);
   }
 }
