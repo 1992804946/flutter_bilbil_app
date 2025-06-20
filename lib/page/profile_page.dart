@@ -3,6 +3,7 @@ import 'package:flutter_bilbil_app/http/core/error.dart';
 import 'package:flutter_bilbil_app/http/dao/profile_dao.dart';
 import 'package:flutter_bilbil_app/model/profile_mo.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
+import 'package:flutter_bilbil_app/util/view_util.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -25,9 +26,33 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        child: Text("我的"),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              //扩展高度
+              expandedHeight: 160,
+              //标题是否固定
+              pinned: true,
+              //定义股东空间
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: EdgeInsets.only(left: 0),
+                title: _buildHead(),
+                background: Container(
+                  color: Colors.deepPurpleAccent,
+                ),
+              ),
+            )
+          ];
+        },
+        body: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text('标题$index'),
+            );
+          },
+          itemCount: 20,
+        ),
       ),
     );
   }
@@ -49,5 +74,27 @@ class _ProfilePageState extends State<ProfilePage>
       print(e);
       showWarnToast(e.message);
     }
+  }
+
+  _buildHead() {
+    if (_profileMo == null) return Container();
+
+    return Container(
+      alignment: Alignment.bottomLeft,
+      padding: EdgeInsets.only(bottom: 30, left: 10),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(23),
+            child: cachedImage(_profileMo!.face, width: 46, height: 46),
+          ),
+          hiSpace(width: 8),
+          Text(
+            _profileMo!.name,
+            style: TextStyle(fontSize: 11, color: Colors.black54),
+          )
+        ],
+      ),
+    );
   }
 }
