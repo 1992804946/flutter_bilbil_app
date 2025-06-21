@@ -15,7 +15,7 @@ class VideoLargeCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HiNavigator.getInstance()
-            .onJumpTo(RouteStatus.detail, args: {"videoMo": videoModel});
+            .onJumpTo(RouteStatus.detail, args: {"videoModel": videoModel});
       },
       child: Container(
         margin: EdgeInsets.only(right: 15, left: 15, bottom: 5),
