@@ -4,6 +4,9 @@ import 'package:flutter_bilbil_app/http/dao/profile_dao.dart';
 import 'package:flutter_bilbil_app/model/profile_mo.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
+import 'package:flutter_bilbil_app/widget/benefit_card.dart';
+import 'package:flutter_bilbil_app/widget/course_card.dart';
+import 'package:flutter_bilbil_app/widget/hi_banner.dart';
 import 'package:flutter_bilbil_app/widget/hi_blur.dart';
 import 'package:flutter_bilbil_app/widget/hi_flexible_header.dart';
 
@@ -29,18 +32,13 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return <Widget>[_buildAppBar()];
-        },
-        body: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text('标题$index'),
-            );
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return <Widget>[_buildAppBar()];
           },
-          itemCount: 20,
-        ),
-      ),
+          body: ListView(
+            padding: EdgeInsets.only(top: 10),
+            children: [..._buildContentList()],
+          )),
     );
   }
 
@@ -120,6 +118,25 @@ class _ProfilePageState extends State<ProfilePage>
         Text('$count', style: TextStyle(fontSize: 15, color: Colors.black87)),
         Text(text, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
+    );
+  }
+
+  _buildContentList() {
+    if (_profileMo == null) {
+      return [];
+    }
+    return [
+      _buildBanner(),
+      CourseCard(courseList: _profileMo!.courseList),
+      BenefitCard(benefitList: _profileMo!.benefitList)
+    ];
+  }
+
+  _buildBanner() {
+    return HiBanner(
+      _profileMo!.bannerList,
+      bannerHeight: 120,
+      padding: EdgeInsets.only(left: 10, right: 10),
     );
   }
 }

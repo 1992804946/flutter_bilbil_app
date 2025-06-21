@@ -92,7 +92,11 @@ class BiliRouteDelegate extends RouterDelegate<BiliRoutePath>
       pages.clear();
       page = pageWarp(BottomNavigator());
     } else if (routeStatus == RouteStatus.detail) {
-      page = pageWarp(VideoDetailPage(videoModel!));
+      if (videoModel == null) {
+        page = pageWarp(Scaffold(body: Center(child: Text("视频未加载"))));
+      } else {
+        page = pageWarp(VideoDetailPage(videoModel!));
+      }
     } else if (routeStatus == RouteStatus.registration) {
       page = pageWarp(RegistrationPage());
     } else if (routeStatus == RouteStatus.notice) {
