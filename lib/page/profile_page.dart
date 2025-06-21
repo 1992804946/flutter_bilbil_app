@@ -30,28 +30,7 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              //扩展高度
-              expandedHeight: 160,
-              //标题是否固定
-              pinned: true,
-              //定义股东空间
-              flexibleSpace: FlexibleSpaceBar(
-                  //collapseMode实现视差滚动
-                  collapseMode: CollapseMode.parallax,
-                  titlePadding: EdgeInsets.only(left: 0),
-                  title: _buildHead(),
-                  background: Stack(
-                    children: [
-                      Positioned.fill(
-                          child: cachedImage(
-                              'https://www.devio.org/img/beauty_camera/beauty_camera4.jpg')),
-                      Positioned.fill(child: HiBlur(sigma: 20)),
-                    ],
-                  )),
-            )
-          ];
+          return <Widget>[_buildAppBar()];
         },
         body: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
@@ -90,5 +69,57 @@ class _ProfilePageState extends State<ProfilePage>
         name: _profileMo!.name,
         face: _profileMo!.face,
         controller: _controller);
+  }
+
+  _buildAppBar() {
+    return SliverAppBar(
+      //扩展高度
+      expandedHeight: 160,
+      //标题是否固定
+      pinned: true,
+      //定义股东空间
+      flexibleSpace: FlexibleSpaceBar(
+          //collapseMode实现视差滚动
+          collapseMode: CollapseMode.parallax,
+          titlePadding: EdgeInsets.only(left: 0),
+          title: _buildHead(),
+          background: Stack(
+            children: [
+              Positioned.fill(
+                  child: cachedImage(
+                      'https://www.devio.org/img/beauty_camera/beauty_camera4.jpg')),
+              Positioned.fill(child: HiBlur(sigma: 20)),
+              Positioned(
+                  bottom: 0, left: 0, right: 0, child: _buildProfileTab())
+            ],
+          )),
+    );
+  }
+
+  _buildProfileTab() {
+    if (_profileMo == null) return Container();
+    return Container(
+      padding: EdgeInsets.only(top: 5, bottom: 5),
+      decoration: BoxDecoration(color: Colors.white54),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildIconText('收藏', _profileMo!.favorite),
+          _buildIconText('点赞', _profileMo!.like),
+          _buildIconText('浏览', _profileMo!.browsing),
+          _buildIconText('金币', _profileMo!.coin),
+          _buildIconText('粉丝', _profileMo!.fans),
+        ],
+      ),
+    );
+  }
+
+  _buildIconText(String text, int count) {
+    return Column(
+      children: [
+        Text('$count', style: TextStyle(fontSize: 15, color: Colors.black87)),
+        Text(text, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+      ],
+    );
   }
 }
