@@ -31,8 +31,9 @@ class HiSocket implements ISocket {
   ISocket open(String vid) {
     _channel = IOWebSocketChannel.connect(_URL + vid,
         headers: headers, pingInterval: Duration(seconds: _intervalSeconds));
+    print("connecting to WebSocket: ${_URL + vid}");
     _channel?.stream.handleError((error) {
-      print('连接发生错误$error');
+      print('连接发生错误:$error');
     }).listen((message) {
       _handleMessage(message);
     });

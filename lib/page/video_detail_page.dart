@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bilbil_app/barrage/barrage_input.dart';
+import 'package:flutter_bilbil_app/barrage/barrage_switch.dart';
+import 'package:flutter_bilbil_app/barrage/hi_barrage.dart';
 import 'package:flutter_bilbil_app/http/core/error.dart';
 import 'package:flutter_bilbil_app/http/dao/favorite_dao.dart';
 import 'package:flutter_bilbil_app/http/dao/like_dao.dart';
 import 'package:flutter_bilbil_app/http/dao/video_detail_dao.dart';
 import 'package:flutter_bilbil_app/model/video_detail_mo.dart';
+import 'package:flutter_bilbil_app/util/hi_constants.dart';
 import 'package:flutter_bilbil_app/util/toast.dart';
 import 'package:flutter_bilbil_app/util/view_util.dart';
 import 'package:flutter_bilbil_app/widget/appBar.dart';
@@ -16,28 +20,33 @@ import 'package:flutter_bilbil_app/widget/video_header.dart';
 import 'package:flutter_bilbil_app/widget/video_large_card.dart';
 import 'package:flutter_bilbil_app/widget/video_toolBar.dart';
 import 'package:flutter_bilbil_app/widget/video_view.dart';
+import 'package:flutter_bilbil_app/barrage/hi_barrage.dart';
+import 'package:flutter_overlay/flutter_overlay.dart';
 import '../model/video_model.dart';
 
 class VideoDetailPage extends StatefulWidget {
   final VideoModel videoModel;
+
   const VideoDetailPage(this.videoModel);
 
   @override
-  State<VideoDetailPage> createState() => _VideoDetailPageState();
+  _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
 class _VideoDetailPageState extends State<VideoDetailPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _controller;
-  List tabs = ["简介", "评论"];
-  VideoModel? videoModel;
+  List tabs = ["简介", "评论288"];
   VideoDetailMo? videoDetailMo;
+  VideoModel? videoModel;
   List<VideoModel> videoList = [];
+  var _barrageKey = GlobalKey<HiBarrageState>();
+  bool _inoutShowing = false;
 
   @override
   void initState() {
     super.initState();
-    //黑色状态栏,仅限安卓
+    //黑色状态栏，仅Android
     changeStatusBar(
         color: Colors.black, statusStyle: StatusStyle.LIGHT_CONTENT);
     _controller = TabController(length: tabs.length, vsync: this);
@@ -54,41 +63,47 @@ class _VideoDetailPageState extends State<VideoDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: MediaQuery.removePadding(
-            removeTop: Platform.isIOS,
-            context: context,
-            child: videoModel?.url != null
-                ? Column(
-                    children: [
-                      //ios黑色状态栏
-                      NavigationBarPlus(
-                        color: Colors.black,
-                        statusStyle: StatusStyle.LIGHT_CONTENT,
-                        height: Platform.isAndroid ? 0 : 46,
-                      ),
-                      _videoView(),
-                      _buildTabNavigation(),
-                      Flexible(
-                          child: TabBarView(
-                        controller: _controller,
-                        children: [
-                          _buildDetailList(),
-                          Container(
-                            child: Text('敬请期待...'),
-                          )
-                        ],
-                      ))
-                    ],
-                  )
-                : Container()));
+      body: MediaQuery.removePadding(
+          removeTop: Platform.isIOS,
+          context: context,
+          child: videoModel?.url != null
+              ? Column(
+                  children: [
+                    //iOS 黑色状态栏
+                    NavigationBarPlus(
+                      color: Colors.black,
+                      statusStyle: StatusStyle.LIGHT_CONTENT,
+                      height: Platform.isAndroid ? 0 : 46,
+                    ),
+                    _buildVideoView(),
+                    _buildTabNavigation(),
+                    Flexible(
+                        child: TabBarView(
+                      controller: _controller,
+                      children: [
+                        _buildDetailList(),
+                        Container(
+                          child: Text('敬请期待...'),
+                        )
+                      ],
+                    ))
+                  ],
+                )
+              : Container()),
+    );
   }
 
-  _videoView() {
-    var model = widget.videoModel;
+  _buildVideoView() {
+    var model = videoModel;
     return VideoView(
-      model.url!,
+      model!.url!,
       cover: model.cover,
       overlayUI: videoAppBar(),
+      barrageUI: HiBarrage(
+          headers: HiConstants.headers(),
+          key: _barrageKey,
+          vid: model.vid,
+          autoplay: true),
     );
   }
 
@@ -104,16 +119,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _tabBar(),
-            Padding(
-              padding: EdgeInsets.only(right: 20),
-              child: Icon(
-                Icons.live_tv_rounded,
-                color: Colors.grey,
-              ),
-            )
-          ],
+          children: [_tabBar(), _buildBarrageBtn()],
         ),
       ),
     );
@@ -139,15 +145,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
 
   buildContents() {
     return [
-      Container(
-        child: VideoHeader(
-          owner: videoModel!.owner,
-        ),
+      VideoHeader(
+        owner: videoModel!.owner,
       ),
       ExpandableContent(videoModel: videoModel!),
       VideoToolBar(
-        videoModel: videoModel!,
         detailMo: videoDetailMo,
+        videoModel: videoModel!,
         onLike: _doLike,
         onUnLike: _onUnLike,
         onFavorite: _onFavorite,
@@ -155,15 +159,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     ];
   }
 
-  ///buildVideoList() {}
-
   void _loadDetail() async {
     try {
       VideoDetailMo result = await VideoDetailDao.get(videoModel!.vid);
       print(result);
       setState(() {
         videoDetailMo = result;
-        //更新旧数据
+        //更新旧的数据
         videoModel = result.videoInfo;
         videoList = result.videoList;
       });
@@ -175,8 +177,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     }
   }
 
-//点赞
-  void _doLike() async {
+  ///点赞
+  _doLike() async {
     try {
       var result = await LikeDao.like(videoModel!.vid, !videoDetailMo!.isLike);
       print(result);
@@ -231,5 +233,32 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     return videoList
         .map((VideoModel mo) => VideoLargeCard(videoModel: mo))
         .toList();
+  }
+
+  _buildBarrageBtn() {
+    return BarrageSwitch(
+        inoutShowing: _inoutShowing,
+        onShowInput: () {
+          setState(() {
+            _inoutShowing = true;
+          });
+          HiOverlay.show(context, child: BarrageInput(
+            onTabClose: () {
+              setState(() {
+                _inoutShowing = false;
+              });
+            },
+          )).then((value) {
+            print('---input:$value');
+            _barrageKey.currentState!.send(value!);
+          });
+        },
+        onBarrageSwitch: (open) {
+          if (open) {
+            _barrageKey.currentState!.play();
+          } else {
+            _barrageKey.currentState!.pause();
+          }
+        });
   }
 }
