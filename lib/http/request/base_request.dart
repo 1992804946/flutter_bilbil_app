@@ -1,4 +1,5 @@
 import 'package:flutter_bilbil_app/http/dao/login_dao.dart';
+import 'package:flutter_bilbil_app/util/hi_constants.dart';
 
 enum HttpMethod { GET, POST, DELETE }
 
@@ -56,9 +57,8 @@ abstract class BaseRequest {
   }
 
   Map<String, dynamic> header = {
-    'course-flag': 'fa',
-    //访问令牌，在课程公告获取
-    "auth-token": "ZmEtMjAyMS0wNC0xMiAyMToyMjoyMC1mYQ==fa",
+    HiConstants.authTokenK: HiConstants.authTokenV,
+    HiConstants.courseFlagK: HiConstants.courseFlagV
   };
 
   ///添加header
